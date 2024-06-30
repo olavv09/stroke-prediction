@@ -1,15 +1,16 @@
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 from functools import partial
 
 # Import data from shared.py
-from shared import df
-from prediction import data, predict
+from shared import data, ratio
+# from prediction import predict
 from shiny import reactive
 from shiny.express import input, render, ui
 from shiny.ui import page_navbar
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Page title (with some additional top padding)
 ui.page_opts(
@@ -18,17 +19,28 @@ ui.page_opts(
 )
 
 with ui.nav_panel("Distributions"):
-    @render.plot
-    def dist():
-        p = sns.histplot(df, x=input.dist_var(), hue="stroke", multiple="stack")
-        return p.set(xlabel=None)
+    with ui.layout_columns(col_widths=(8, 4)):
+        with ui.card():
+            @render.plot
+            def dist():
+                p = sns.displot(data, x=input.dist_var(), hue=data["stroke"])
+                return p.set(xlabel=None)
+        with ui.card():
+            nd = data[data["stroke"] == 1]
+            nd = nd[nd["gender"] == 0]
+            @render.text()
+            def dist_ratio():
+                txt = ""
+                for value in data[input.dist_var()].unique():
+                    txt += f"{value}: {str(ratio(input.dist_var(), value))}%\n"
+                return txt
 
     ui.input_select("dist_var", "Select variable", choices=["gender","age","hypertension","heart_disease","ever_married","work_type","Residence_type","bmi","smoking_status"])
 
 with ui.nav_panel("Statistical relationships"):
     @render.plot
     def stat():
-        p = sns.relplot(df, x=input.stat_var(), y="stroke", kind="line")
+        p = sns.relplot(data, x=input.stat_var(), y="stroke", kind="line")
         return p.set(xlabel=None)
 
     ui.input_select("stat_var", "Select variable", choices=["gender","age","hypertension","heart_disease","ever_married","work_type","Residence_type","bmi","smoking_status"])
