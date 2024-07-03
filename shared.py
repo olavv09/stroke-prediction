@@ -9,5 +9,4 @@ def ratio(column, value):
     nd1 = data[data["stroke"] == "Yes"]
     nd1 = nd1[nd1[column] == value]
     nd2 = data[data[column] == value]
-    # print(len(nd1), len(nd2))
     return round(len(nd1) / len(nd2) * 100, 2)
