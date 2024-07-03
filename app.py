@@ -4,7 +4,7 @@ from functools import partial
 
 # Import data from shared.py
 from shared import data, ratio
-# from prediction import predict
+from prediction import predict
 from shiny import reactive
 from shiny.express import input, render, ui
 from shiny.ui import page_navbar
@@ -75,7 +75,7 @@ with ui.nav_panel("Prediction"):
                     ui.input_select(
                         "work_type",
                         "Work type",
-                        {'Never worked': 'Never worked', 'Private': 'Private', 'Self-employed': 'Self-employed', 'Govt job': 'Govt job', 'Children': 'Children'},
+                        {'Never_worked': 'Never worked', 'Private': 'Private', 'Self-employed': 'Self-employed', 'Govt_job': 'Govt job', 'Children': 'Children'},
                     )
                     ui.input_select(
                         "Residence_type",
@@ -86,7 +86,7 @@ with ui.nav_panel("Prediction"):
                     ui.input_select(
                         "smoking_status",
                         "Smoking status",
-                        {'Formerly smoked': 'Formerly smoked', 'Never smoked': 'Never smoked', 'Smokes': 'Smokes'},
+                        {'formerly smoked': 'Formerly smoked', 'never smoked': 'Never smoked', 'smokes': 'Smokes'},
                     )
         with ui.card():
             ui.input_action_button("action_button", "Predict")  
@@ -94,5 +94,6 @@ with ui.nav_panel("Prediction"):
             @render.text()
             @reactive.event(input.action_button)
             def counter():
-                new_data = pd.DataFrame([[input.gender(), int(input.age()), int(input.hypertension()), int(input.heart_disease()), input.ever_married(), input.work_type(), input.Residence_type(), float(input.bmi()), input.smoking_status()]], columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'bmi', 'smoking_status'])
-                return f"Predicted: {'Stroke' if predict(new_data) >= 1 else 'No stroke'}"
+                new_data = pd.DataFrame([[input.gender(), float(input.age()), int(input.hypertension()), int(input.heart_disease()), input.ever_married(), input.work_type(), input.Residence_type(), float(input.bmi()), input.smoking_status()]], columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'bmi', 'smoking_status'])
+                predicted = predict(new_data)
+                return f"Predicted: {'Stroke' if predicted >= 1 else 'No stroke'}"
