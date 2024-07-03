@@ -53,7 +53,7 @@ with ui.nav_panel("Prediction"):
                     ui.input_select(
                         "gender",
                         "Gender",
-                        {0: "Male", 1: "Female"},
+                        {"Male": "Male", "Female": "Female"},
                     )
                     ui.input_numeric("age", "Age", 1, min=0, max=100)
                     ui.input_select(
@@ -69,24 +69,24 @@ with ui.nav_panel("Prediction"):
                     ui.input_select(
                         "ever_married",
                         "Ever married",
-                        {0: "No", 1: "Yes"},
+                        {"No": "No", "Yes": "Yes"},
                     )
                 with ui.card():
                     ui.input_select(
                         "work_type",
                         "Work type",
-                        {0: 'Never worked', 1: 'Private', 2: 'Self-employed', 3: 'Govt job', 4: 'Children'},
+                        {'Never worked': 'Never worked', 'Private': 'Private', 'Self-employed': 'Self-employed', 'Govt job': 'Govt job', 'Children': 'Children'},
                     )
                     ui.input_select(
                         "Residence_type",
                         "Residence type",
-                        {0: 'Rural', 1: 'Urban'},
+                        {'Rural': 'Rural', 'Urban': 'Urban'},
                     )
                     ui.input_numeric("bmi", "BMI", 25, min=0, max=100)
                     ui.input_select(
                         "smoking_status",
                         "Smoking status",
-                        {1: 'Formerly smoked', 2: 'Never smoked', 3: 'Smokes'},
+                        {'Formerly smoked': 'Formerly smoked', 'Never smoked': 'Never smoked', 'Smokes': 'Smokes'},
                     )
         with ui.card():
             ui.input_action_button("action_button", "Predict")  
@@ -94,6 +94,5 @@ with ui.nav_panel("Prediction"):
             @render.text()
             @reactive.event(input.action_button)
             def counter():
-                new_data = pd.DataFrame([[int(input.gender()), int(input.age()), int(input.hypertension()), int(input.heart_disease()), int(input.ever_married()), int(input.work_type()), int(input.Residence_type()), float(input.bmi()), int(input.smoking_status())]], columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'bmi', 'smoking_status'])
-                predicted = 'stroke' if predict(new_data) > 0.5 else 'no stroke'
-                return (f"Prediction #{input.action_button()}: {predicted}")
+                new_data = pd.DataFrame([[input.gender(), int(input.age()), int(input.hypertension()), int(input.heart_disease()), input.ever_married(), input.work_type(), input.Residence_type(), float(input.bmi()), input.smoking_status()]], columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'bmi', 'smoking_status'])
+                return f"Predicted: {'Stroke' if predict(new_data) >= 1 else 'No stroke'}"
